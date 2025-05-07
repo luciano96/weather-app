@@ -1,13 +1,15 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { RightNowIn } from "~/components/RightNowIn";
+import { SearchLocation } from "~/components/SearchLocation";
 import { TempInfo } from "~/components/TempInfo";
-import { cn } from "~/utils";
-import { WeatherMain, weatherQueryOptions } from "~/utils/weather";
+import { cn } from "~/lib/utils";
+import { WeatherMain, weatherQueryOptions } from "~/lib/utils/weather";
 
 export const Route = createFileRoute("/")({
   component: Weather,
 });
-
 
 const weatherGradients: Record<WeatherMain, string> = {
   Thunderstorm: "bg-gradient-to-br from-gray-700 via-gray-900 to-black",
@@ -28,24 +30,33 @@ const weatherGradients: Record<WeatherMain, string> = {
 };
 
 function Weather() {
-  const { data, isLoading } = useSuspenseQuery(
-    weatherQueryOptions("ermesinde")
-  );
+  const [location, setLocation] = useState("");
+  const { data, isLoading } = useSuspenseQuery(weatherQueryOptions(location));
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className={cn('bg-white flex justify-center text-black h-screen v-screen items-center', weatherGradients[data.weather.main])}>
-      <TempInfo
-        feelsLike={data.feelsLikeTemp}
-        temperature={data.temperature}
-        min={data.minTemp}
-        max={data.maxTemp}
-        unit="celsius"
-        weather={data.weather}
-      />
+    <div
+      className={cn(
+        "bg-white flex flex-col justify-center text-black h-screen v-screen items-center",
+        weatherGradients[data?.weather.main ?? "Haze"]
+      )}
+    >
+      <div className="min-w-72">
+        <SearchLocation onSubmit={setLocation} defaultLocation={location} />
+      </div>
+      {data && (
+        <TempInfo
+          feelsLike={data.feelsLikeTemp}
+          temperature={data.temperature}
+          min={data.minTemp}
+          max={data.maxTemp}
+          unit="celsius"
+          weather={data.weather}
+        />
+      )}
     </div>
   );
 }

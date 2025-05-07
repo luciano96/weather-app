@@ -1,5 +1,6 @@
 import { json } from "@tanstack/react-start";
 import { createAPIFileRoute } from "@tanstack/react-start/api";
+import { setResponseStatus } from "@tanstack/react-start/server";
 import axios from "axios";
 import { err, fromPromise, ok, okAsync } from "neverthrow";
 export type WeatherResponse = {
@@ -53,11 +54,16 @@ export const APIRoute = createAPIFileRoute("/api/weather")({
 
     const res = await fromPromise(
       axios.get<WeatherResponse>(
-      `https://api.openweathermap.org/data/2.5/weather?q=${searchParams.get("q")}&APPID=${process.env.APPID}`
+        `https://api.openweathermap.org/data/2.5/weather?q=${searchParams.get("q")}&APPID=${process.env.APPID}`
       ),
       (e) => e as Error
     );
 
-    return json(res.isOk() ? res.value.data : "Could not load promise: " + res.error.message);
+    if (res.isErr()) {
+      console.log("MONKA");
+      return json({ detail: "There was an error" }, { status: 500 });
+    }
+
+    return json(res.value.data);
   },
 });

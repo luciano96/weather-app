@@ -46,15 +46,19 @@ export const weatherQueryOptions = (location: string) =>
   queryOptions({
     queryKey: ["weather", location],
     queryFn: async () => {
+      if (!location) {
+        return null;
+      }
       const searchParams = new URLSearchParams({ q: location });
       return axios
         .get<WeatherResponse>(
           DEPLOY_URL + "/api/weather?" + searchParams.toString()
         )
-        .then((r) => mapToWeatherInfo(r.data))
+        .then(
+          (r) => (console.log("BUT CAME HERE FIRST?"), mapToWeatherInfo(r.data))
+        )
         .catch((e) => {
-          console.log(e);
-          throw new Error("Failed to fetch weather ");
+          throw new Error("Failed to fetch weather");
         });
     },
   });

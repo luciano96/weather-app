@@ -1,5 +1,5 @@
-import { convertTemperature, getUnitFormat, TTemperatureUnits } from "~/utils";
-import { WeatherInfo } from "~/utils/weather";
+import { convertTemperature, getUnitFormat, TTemperatureUnits } from "~/lib/utils";
+import { WeatherInfo } from "~/lib/utils/weather";
 
 type TempInfoProps = {
   unit: TTemperatureUnits;
