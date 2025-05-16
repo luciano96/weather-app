@@ -3,6 +3,8 @@ import { Input } from "~/components/ui/input";
 import { Button } from "./ui/button";
 import { Pencil } from "lucide-react";
 import { RightNowIn } from "./RightNowIn";
+import { useQuery } from "@tanstack/react-query";
+import { searchQueryOptions } from "~/lib/utils/search";
 
 type TSearchProps = {
   onSubmit: (value: string) => void;
@@ -12,7 +14,9 @@ export const SearchLocation = ({ onSubmit, defaultLocation }: TSearchProps) => {
   const [location, setLocation] = useState<string | null>(defaultLocation);
   const [isEditing, setIsEditing] = useState(!location);
   const inputRef = useRef(null);
+  const { data, isLoading } = useQuery(searchQueryOptions(location));
 
+  console.log(data);
   const handleEditing = (value: string) => {
     setLocation(value);
   };
@@ -55,7 +59,10 @@ export const SearchLocation = ({ onSubmit, defaultLocation }: TSearchProps) => {
     <RightNowIn>
       <div className="flex gap-5 items-center">
         <h1 className="text-6xl">{location}</h1>
-        <Button className="p-2 size-10" onClick={() => (setIsEditing(true), onSubmit(""))}>
+        <Button
+          className="p-2 size-10"
+          onClick={() => (setIsEditing(true), onSubmit(""))}
+        >
           <Pencil size={20} className="text-black shrink-0" />
         </Button>
       </div>
